@@ -1,215 +1,253 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Tasbih Digital</title>
-    <style>
-        /* CSS untuk tampilan aplikasi */
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-        :root {
-            --bg-color: #f0f2f5;
-            --text-color: #1c1e21;
-            --accent-color: #007bff;
-            --container-bg: #ffffff;
-        }
-
-        body {
-            margin: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            -webkit-tap-highlight-color: transparent; /* Mencegah highlight biru saat di-tap di mobile */
-        }
-
-        #tasbih-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            user-select: none; /* Mencegah teks terseleksi saat tap cepat */
-            text-align: center;
-            padding: 20px;
-            box-sizing: border-box;
-            background-color: var(--container-bg);
-            transition: transform 0.05s ease-out;
-        }
-        
-        #tasbih-container:active {
-            transform: scale(0.98); /* Efek visual saat di-tap */
-        }
-
-        #timer-display {
-            font-size: 1.5rem;
-            color: #6c757d;
-            margin-bottom: 20px;
-            font-weight: 400;
-        }
-
-        #dhikr-display {
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--accent-color);
-            margin: 0;
-        }
-
-        #count-display {
-            font-size: 7rem;
-            font-weight: 600;
-            margin: 10px 0;
-            line-height: 1;
-        }
-
-        #target-display {
-            font-size: 1.5rem;
-            color: #6c757d;
-        }
-
-        #reset-button {
-            margin-top: 30px;
-            padding: 10px 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--accent-color);
-            background-color: transparent;
-            border: 2px solid var(--accent-color);
-            border-radius: 50px;
-            cursor: pointer;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        #reset-button:hover {
-            background-color: var(--accent-color);
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Tasbih Digital</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f2f5;
+      color: #1c1e21;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    #cover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, #007bff, #00c6ff);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 3;
+    }
+    #cover h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    #start-btn {
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 50px;
+      background: white;
+      color: #007bff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    #tasbih-container {
+      width: 100%;
+      height: 100vh;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+      box-sizing: border-box;
+      z-index: 2;
+      position: relative;
+    }
+    #dhikr-display {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #007bff;
+      margin: 20px 0;
+      z-index: 3;
+      position: relative;
+    }
+    #count-display {
+      font-size: 5rem;
+      font-weight: 600;
+      z-index: 3;
+      position: relative;
+    }
+    #target-display {
+      font-size: 1.2rem;
+      color: #6c757d;
+      margin-bottom: 20px;
+      z-index: 3;
+      position: relative;
+    }
+    #reset-button {
+      margin-top: 30px;
+      padding: 10px 25px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #007bff;
+      background-color: transparent;
+      border: 2px solid #007bff;
+      border-radius: 50px;
+      cursor: pointer;
+      z-index: 3;
+      position: relative;
+    }
+    #water-bg {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 0%;
+      background: linear-gradient(to top, rgba(0,123,255,0.4), rgba(0,123,255,0.1));
+      transition: height 0.4s ease;
+      z-index: 1;
+    }
+    #confetti-emoji {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 4rem;
+      z-index: 4;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
-    <div id="tasbih-container">
-        <p id="timer-display">0:00</p>
-        <h2 id="dhikr-display">Subhanallah</h2>
-        <h1 id="count-display">0</h1>
-        <p id="target-display">/ 33</p>
-        <button id="reset-button">Reset</button>
-    </div>
+  <div id="cover">
+    <h1>✨ Selamat Datang di Tasbih Digital ✨</h1>
+    <button id="start-btn">START</button>
+  </div>
 
-    <script>
-        // JavaScript untuk logika aplikasi
-        const dhikrDisplay = document.getElementById('dhikr-display');
-        const countDisplay = document.getElementById('count-display');
-        const targetDisplay = document.getElementById('target-display');
-        const tasbihContainer = document.getElementById('tasbih-container');
-        const resetButton = document.getElementById('reset-button');
-        const timerDisplay = document.getElementById('timer-display'); // Elemen Timer
+  <div id="tasbih-container">
+    <h2 id="dhikr-display">Subhanallah</h2>
+    <h1 id="count-display">0</h1>
+    <p id="target-display">/ 33</p>
+    <button id="reset-button">Reset</button>
+  </div>
 
-        // Definisi urutan zikir dan targetnya
-        const dhikrPhases = [
-            { text: 'إِلَى حَضْرَةِ النَّبِيِّ الْمُصْطَفَى سَيِّدِنَا مُحمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ وَاٰلِهِ وَأَزْوَاجِهِ وَأَوْلَادِهِ وَذُرِّيَّاتِهِ الْفَــاتِحَةُ', target: 1 },
-            { text: 'ثُمَّ إِلَى حَضْرَةِ اِخْوَانِهِ مِنَ الْأَنْبِيَاءِوَالْمُرْسَلِيْنَ وَالْأَوْلِيَاءِ وَالشُّهَدَاءِ وَالصَّالِحِيْنَ وَالصَّحَابَةِ وَالتَّابِعِيْنَ وَالْعُلَمَاءِ وَالْمُصَنِّفِيْنَ وَجَمِيْعِ الْمَلَائِكَةِ الْمُقَرَّبِيْنَ خُصُوْصًا سَيِّدِنَا شَيْخِ عَبْدِ الْقادِرِ الجَيْلَانِي رَضِيَ اللهُ عَنْهُ …اَلْفَاتِحَه', target: 1 },
-            { text: 'إِلَى حَضْرَةِ مْبَاهْ خَلِيْل بَنْكَلَان', target: 1 },
-            { text: 'وَإِلَى رُوْحِ مَنْ أَجَازَنِي', target: 1 },
-            { text: 'وَإِلَى أَبِي وَأُمِّي', target: 1 },
-            { text: 'الْفَاتِحَة', target: 50 },
-            { text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ', target: 3 },
-            { text: 'يَالَطِيْفُ', target: 129 },
-            { text: 'ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ', target: 7 },
-            { text: 'اَللهُمَّ اِنِّىْ اَسْأَلُكَ اَنْ تَرْزُقَنِىْ رِزْقًا حَلاَلاً وَاسِعًا طَيِّبًا مِنْ غَيْرِ تَعَبٍ وَلاَمَشَقَّةٍ وَلاَضَيْرٍ وَلاَنَصَبٍ اِنَّكَ عَلَى كُلِّ شَىْءٍ قَدِيْرٌ', target: 3 },
-            { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
-        ];
+  <div id="water-bg"></div>
 
-        let currentCount = 0;
-        let currentPhaseIndex = 0;
-        let timerInterval;
-        let startTime;
+  <div id="confetti-emoji">👍</div>
 
-        // --- LOGIKA TIMER ---
-        function startTimer() {
-            startTime = new Date();
-            timerInterval = setInterval(updateTimer, 1000);
+  <script>
+    const cover = document.getElementById('cover');
+    const startBtn = document.getElementById('start-btn');
+    const tasbihContainer = document.getElementById('tasbih-container');
+    const dhikrDisplay = document.getElementById('dhikr-display');
+    const countDisplay = document.getElementById('count-display');
+    const targetDisplay = document.getElementById('target-display');
+    const waterBg = document.getElementById('water-bg');
+    const resetButton = document.getElementById('reset-button');
+    const confettiEmoji = document.getElementById('confetti-emoji');
+
+    const dhikrPhases = [
+      { text: 'إِلَى حَضْرَةِ النَّبِيِّ...', target: 1 },
+      { text: 'ثُمَّ إِلَى حَضْرَةِ اِخْوَانِهِ...', target: 1 },
+      { text: 'إِلَى حَضْرَةِ مْبَاهْ خَلِيْل بَنْكَلَان', target: 1 },
+      { text: 'وَإِلَى رُوْحِ مَنْ أَجَازَنِي', target: 1 },
+      { text: 'وَإِلَى أَبِي وَأُمِّي', target: 1 },
+      { text: 'الْفَاتِحَة', target: 50 },
+      { text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ...', target: 3 },
+      { text: 'يَالَطِيْفُ', target: 129 },
+      { text: 'ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ...', target: 7 },
+      { text: 'اَللهُمَّ اِنِّىْ...', target: 3 },
+      { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
+    ];
+
+    let currentPhaseIndex = 0;
+    let currentCount = 0;
+
+    function updateDisplay() {
+      const phase = dhikrPhases[currentPhaseIndex];
+      dhikrDisplay.textContent = phase.text;
+      countDisplay.textContent = currentCount;
+      targetDisplay.textContent = `/ ${phase.target}`;
+      let percent = (currentCount / phase.target) * 100;
+      waterBg.style.height = percent + '%';
+    }
+
+    function vibrate(ms) {
+      if (navigator.vibrate) navigator.vibrate(ms);
+    }
+
+    function handleTap() {
+      currentCount++;
+      const phase = dhikrPhases[currentPhaseIndex];
+      if (currentCount >= phase.target) {
+        vibrate([100,50,100]);
+        currentPhaseIndex++;
+        if (currentPhaseIndex >= dhikrPhases.length) {
+          showConfetti();
+          return;
         }
+        currentCount = 0;
+      } else {
+        vibrate(50);
+      }
+      updateDisplay();
+    }
 
-        function updateTimer() {
-            const now = new Date();
-            const elapsedSeconds = Math.floor((now - startTime) / 1000);
-            
-            const minutes = Math.floor(elapsedSeconds / 60);
-            const seconds = elapsedSeconds % 60;
+    function resetAll(e) {
+      e.stopPropagation();
+      currentPhaseIndex = 0;
+      currentCount = 0;
+      updateDisplay();
+    }
 
-            const formattedTime = `${minutes}:${String(seconds).padStart(2, '0')}`;
-            timerDisplay.textContent = formattedTime;
+    function showConfetti() {
+      let duration = 3000; // total durasi 3 detik
+      let end = Date.now() + duration;
+
+      (function frame() {
+        // confetti warna
+        confetti({
+          particleCount: 30,
+          spread: 90,
+          origin: { y: 0.6 },
+          colors: ['#FFD700', '#000000', '#FFFFFF']
+        });
+
+        // confetti emoji 👍
+        confetti({
+          particleCount: 10,
+          spread: 70,
+          origin: { y: 0.6 },
+          shapes: ['text'],
+          emojis: ['👍'],
+          scalar: 2
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
         }
-        // --------------------
+      })();
 
+      // Emoji besar di tengah
+      confettiEmoji.style.display = 'flex';
+      setTimeout(() => {
+        confettiEmoji.style.display = 'none';
+        cover.style.display = 'flex';
+        tasbihContainer.style.display = 'none';
+      }, duration + 1000);
+    }
 
-        // Fungsi untuk memperbarui tampilan di layar
-        function updateDisplay() {
-            const currentPhase = dhikrPhases[currentPhaseIndex];
-            dhikrDisplay.textContent = currentPhase.text;
-            countDisplay.textContent = currentCount;
-            targetDisplay.textContent = `/ ${currentPhase.target}`;
-        }
-        
-        // Fungsi untuk memberikan getaran (jika didukung)
-        function vibrate(duration) {
-            if (navigator.vibrate) {
-                navigator.vibrate(duration);
-            }
-        }
+    startBtn.addEventListener('click', () => {
+      cover.style.display = 'none';
+      tasbihContainer.style.display = 'flex';
+      currentPhaseIndex = 0;
+      currentCount = 0;
+      updateDisplay();
+    });
 
-        // Fungsi yang dijalankan saat layar di-tap
-        function handleTap() {
-            currentCount++;
-            
-            const currentPhase = dhikrPhases[currentPhaseIndex];
-
-            // Cek jika hitungan sudah mencapai target
-            if (currentCount > currentPhase.target) {
-                currentCount = 1; // Mulai hitungan dari 1 untuk zikir selanjutnya
-                currentPhaseIndex++; // Pindah ke zikir selanjutnya
-                
-                // Jika sudah selesai semua zikir, kembali ke awal
-                if (currentPhaseIndex >= dhikrPhases.length) {
-                    currentPhaseIndex = 0;
-                }
-                vibrate([100, 50, 100]); // Getaran lebih panjang sebagai penanda
-            } else {
-                 vibrate(50); // Getaran singkat setiap tap
-            }
-            
-            updateDisplay();
-        }
-
-        // Fungsi untuk mereset semua hitungan
-        function resetAll(event) {
-            event.stopPropagation(); // Mencegah tap pada tombol juga dihitung sebagai tap tasbih
-            currentCount = 0;
-            currentPhaseIndex = 0;
-            vibrate(150);
-            updateDisplay();
-            
-            // Reset dan mulai ulang timer
-            clearInterval(timerInterval);
-            timerDisplay.textContent = "0:00";
-            startTimer();
-        }
-        
-        // Menambahkan event listener
-        tasbihContainer.addEventListener('click', handleTap);
-        resetButton.addEventListener('click', resetAll);
-        
-        // Inisialisasi tampilan dan mulai timer saat halaman pertama kali dimuat
-        updateDisplay();
-        startTimer();
-    </script>
+    tasbihContainer.addEventListener('click', handleTap);
+    resetButton.addEventListener('click', resetAll);
+  </script>
 
 </body>
 </html>
