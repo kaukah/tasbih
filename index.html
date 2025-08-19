@@ -43,6 +43,13 @@
       color: #007bff;
       font-weight: 600;
       cursor: pointer;
+      margin-top: 10px;
+    }
+    #vibrate-toggle {
+      margin-top: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     #tasbih-container {
       width: 100%;
@@ -64,19 +71,20 @@
       margin: 20px 0;
       z-index: 3;
       position: relative;
+      white-space: pre-line;
+    }
+    #count-display, #target-display {
+      z-index: 3;
+      position: relative;
     }
     #count-display {
       font-size: 5rem;
       font-weight: 600;
-      z-index: 3;
-      position: relative;
     }
     #target-display {
       font-size: 1.2rem;
       color: #6c757d;
       margin-bottom: 20px;
-      z-index: 3;
-      position: relative;
     }
     #reset-button {
       margin-top: 30px;
@@ -122,11 +130,15 @@
   <div id="cover">
     <h1>✨ Bismillah Profit 100Juta / Bulan ✨</h1>
     <button id="start-btn">Gass 🚀</button>
+    <div id="vibrate-toggle">
+      <input type="checkbox" id="vibrate-check" checked>
+      <label for="vibrate-check">Vibrate On</label>
+    </div>
   </div>
 
   <div id="tasbih-container">
     <h2 id="dhikr-display">Subhanallah</h2>
-    <h1 id="count-display">0</h1>
+    <h1 id="count-display">1</h1>
     <p id="target-display">/ 33</p>
     <button id="reset-button">🔄 Ulang</button>
   </div>
@@ -145,50 +157,66 @@
     const waterBg = document.getElementById('water-bg');
     const resetButton = document.getElementById('reset-button');
     const confettiEmoji = document.getElementById('confetti-emoji');
+    const vibrateCheck = document.getElementById('vibrate-check');
 
+    // Gabungan 5 tasbih awal jadi 1 layar tanpa target/count
     const dhikrPhases = [
-      { text: 'إِلَى حَضْرَةِ النَّبِيِّ الْمُصْطَفَى سَيِّدِنَا مُحمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ وَاٰلِهِ وَأَزْوَاجِهِ وَأَوْلَادِهِ وَذُرِّيَّاتِهِ الْفَــاتِحَةُ', target: 1 },
-            { text: 'ثُمَّ إِلَى حَضْرَةِ اِخْوَانِهِ مِنَ الْأَنْبِيَاءِوَالْمُرْسَلِيْنَ وَالْأَوْلِيَاءِ وَالشُّهَدَاءِ وَالصَّالِحِيْنَ وَالصَّحَابَةِ وَالتَّابِعِيْنَ وَالْعُلَمَاءِ وَالْمُصَنِّفِيْنَ وَجَمِيْعِ الْمَلَائِكَةِ الْمُقَرَّبِيْنَ خُصُوْصًا سَيِّدِنَا شَيْخِ عَبْدِ الْقادِرِ الجَيْلَانِي رَضِيَ اللهُ عَنْهُ …اَلْفَاتِحَه', target: 1 },
-            { text: 'إِلَى حَضْرَةِ مْبَاهْ خَلِيْل بَنْكَلَان', target: 1 },
-            { text: 'وَإِلَى رُوْحِ مَنْ أَجَازَنِي', target: 1 },
-            { text: 'وَإِلَى أَبِي وَأُمِّي', target: 1 },
-            { text: 'الْفَاتِحَة', target: 50 },
-            { text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ', target: 3 },
-            { text: 'يَالَطِيْفُ', target: 129 },
-            { text: 'ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ', target: 7 },
-            { text: 'اَللهُمَّ اِنِّىْ اَسْأَلُكَ اَنْ تَرْزُقَنِىْ رِزْقًا حَلاَلاً وَاسِعًا طَيِّبًا مِنْ غَيْرِ تَعَبٍ وَلاَمَشَقَّةٍ وَلاَضَيْرٍ وَلاَنَصَبٍ اِنَّكَ عَلَى كُلِّ شَىْءٍ قَدِيْرٌ', target: 3 },
-            { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
+      { text: 'Tawasul:\n\n- إِلَى حَضْرَةِ النَّبِيِّ...\n\n- ثُمَّ إِلَى حَضْرَةِ اِخْوَانِهِ...\n\n- إِلَى حَضْرَةِ مْبَاهْ خَلِيْل...\n\n- وَإِلَى رُوْحِ مَنْ أَجَازَنِي\n\n- وَإِلَى أَبِي وَأُمِّي', target: 0 },
+      { text: 'الْفَاتِحَة', target: 50 },
+      { text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ...', target: 3 },
+      { text: 'يَالَطِيْفُ', target: 129 },
+      { text: 'ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ...', target: 7 },
+      { text: 'اَللهُمَّ اِنِّىْ...', target: 3 },
+      { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
     ];
 
     let currentPhaseIndex = 0;
-    let currentCount = 0;
+    let currentCount = 1;
 
     function updateDisplay() {
       const phase = dhikrPhases[currentPhaseIndex];
       dhikrDisplay.textContent = phase.text;
-      countDisplay.textContent = currentCount;
-      targetDisplay.textContent = `/ ${phase.target}`;
-      let percent = (currentCount / phase.target) * 100;
-      waterBg.style.height = percent + '%';
+
+      if (phase.target > 0) {
+        countDisplay.style.display = 'block';
+        targetDisplay.style.display = 'block';
+        countDisplay.textContent = currentCount;
+        targetDisplay.textContent = `/ ${phase.target}`;
+        let percent = (currentCount / phase.target) * 100;
+        waterBg.style.height = percent + '%';
+      } else {
+        countDisplay.style.display = 'none';
+        targetDisplay.style.display = 'none';
+        waterBg.style.height = '0%';
+      }
     }
 
     function vibrate(ms) {
-      if (navigator.vibrate) navigator.vibrate(ms);
+      if (vibrateCheck.checked && navigator.vibrate) {
+        navigator.vibrate(ms);
+      }
     }
 
     function handleTap() {
-      currentCount++;
       const phase = dhikrPhases[currentPhaseIndex];
-      if (currentCount >= phase.target) {
-        vibrate([100,50,100]);
+
+      if (phase.target === 0) {
+        // langsung lanjut karena tidak ada target
         currentPhaseIndex++;
-        if (currentPhaseIndex >= dhikrPhases.length) {
-          showConfetti();
-          return;
-        }
-        currentCount = 0;
+        currentCount = 1;
       } else {
-        vibrate(50);
+        if (currentCount < phase.target) {
+          currentCount++;
+          vibrate(50);
+        } else if (currentCount === phase.target) {
+          vibrate([100,50,100]);
+          currentPhaseIndex++;
+          if (currentPhaseIndex >= dhikrPhases.length) {
+            showConfetti();
+            return;
+          }
+          currentCount = 1;
+        }
       }
       updateDisplay();
     }
@@ -196,24 +224,21 @@
     function resetAll(e) {
       e.stopPropagation();
       currentPhaseIndex = 0;
-      currentCount = 0;
+      currentCount = 1;
       updateDisplay();
     }
 
     function showConfetti() {
-      let duration = 3000; // total durasi 3 detik
+      let duration = 3000;
       let end = Date.now() + duration;
 
       (function frame() {
-        // confetti warna
         confetti({
           particleCount: 30,
           spread: 90,
           origin: { y: 0.6 },
           colors: ['#FFD700', '#000000', '#FFFFFF']
         });
-
-        // confetti emoji 👍
         confetti({
           particleCount: 10,
           spread: 70,
@@ -222,13 +247,11 @@
           emojis: ['👍'],
           scalar: 2
         });
-
         if (Date.now() < end) {
           requestAnimationFrame(frame);
         }
       })();
 
-      // Emoji besar di tengah
       confettiEmoji.style.display = 'flex';
       setTimeout(() => {
         confettiEmoji.style.display = 'none';
@@ -241,7 +264,7 @@
       cover.style.display = 'none';
       tasbihContainer.style.display = 'flex';
       currentPhaseIndex = 0;
-      currentCount = 0;
+      currentCount = 1;
       updateDisplay();
     });
 
