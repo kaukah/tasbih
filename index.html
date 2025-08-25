@@ -75,6 +75,22 @@
     
     
     
+    
+    #stopwatch {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
+      background: rgba(255,255,255,0.7);
+      padding: 5px 10px;
+      border-radius: 8px;
+      z-index: 100;
+    }
+
+
     .choice-btn {
   padding: 10px 20px;
   margin: 5px;
@@ -102,6 +118,7 @@
     </div>
   </div>
 
+  <div id="stopwatch">00:00</div>
   <div id="tasbih-container">
     <h2 id="dhikr-display">Subhanallah</h2>
 <div id="target-display">/ 33</div>
@@ -250,7 +267,7 @@ function skipPhase(e) {
 }
 
 
-    function showConfetti(){
+    function showConfetti(){ stopStopwatch();
       let duration = 3000, end = Date.now() + duration;
       (function frame(){
         confetti({ particleCount: 30, spread: 90, origin: { y: 0.6 }, colors: ['#FFD700','#000000','#FFFFFF'] });
@@ -261,8 +278,33 @@ function skipPhase(e) {
       setTimeout(() => { confettiEmoji.style.display = 'none'; cover.style.display = 'flex'; tasbihContainer.style.display = 'none'; }, duration + 1000);
     }
 
+    
+    let stopwatchInterval;
+    let stopwatchStart;
+
+    function startStopwatch() {
+      stopwatchStart = Date.now();
+      stopwatchInterval = setInterval(updateStopwatch, 1000);
+    }
+
+    function stopStopwatch() {
+      clearInterval(stopwatchInterval);
+    }
+
+    function resetStopwatch() {
+      clearInterval(stopwatchInterval);
+      document.getElementById('stopwatch').textContent = "00:00";
+    }
+
+    function updateStopwatch() {
+      const elapsed = Math.floor((Date.now() - stopwatchStart) / 1000);
+      const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const seconds = String(elapsed % 60).padStart(2, '0');
+      document.getElementById('stopwatch').textContent = `${minutes}:${seconds}`;
+    }
+
     startBtn.addEventListener('click', () => {
-      cover.style.display = 'none'; tasbihContainer.style.display = 'flex'; currentPhaseIndex = 0; currentCount = 1; updateDisplay();
+      cover.style.display = 'none'; tasbihContainer.style.display = 'flex'; currentPhaseIndex = 0; currentCount = 1; updateDisplay(); resetStopwatch(); startStopwatch();
     });
 
     tasbihContainer.addEventListener('click', handleTap);
