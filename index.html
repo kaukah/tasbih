@@ -73,9 +73,6 @@
       justify-content: center; align-items: center; font-size: 4rem; z-index: 4;
     }
     
-    
-    
-    
     #stopwatch {
       position: absolute;
       top: 10px;
@@ -90,19 +87,17 @@
       z-index: 100;
     }
 
-
     .choice-btn {
-  padding: 10px 20px;
-  margin: 5px;
-  font-size: 1.2rem;
-  border: 2px solid #007bff;
-  border-radius: 10px;
-  background: white;
-  color: #007bff;
-  font-weight: 600;
-  cursor: pointer;
-}
-
+      padding: 10px 20px;
+      margin: 5px;
+      font-size: 1.2rem;
+      border: 2px solid #007bff;
+      border-radius: 10px;
+      background: white;
+      color: #007bff;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
   </style>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -121,12 +116,11 @@
   <div id="stopwatch">00:00</div>
   <div id="tasbih-container">
     <h2 id="dhikr-display">Subhanallah</h2>
-<div id="target-display">/ 33</div>
+    <div id="target-display">/ 33</div>
     <h1 id="count-display">1</h1>
     <button id="reset-button">Skip</button>
   </div>
 
-  <!-- Layer progress -->
   <div id="gold-fill"></div>
   <img id="coin-img" src="coin.png" alt="coins" />
 
@@ -145,129 +139,126 @@
     const confettiEmoji = document.getElementById('confetti-emoji');
     const vibrateCheck = document.getElementById('vibrate-check');
 
-    // (opsional) suara ding saat selesai fase
     const ding = new Audio('ding.mp3');
 
     const dhikrPhases = [
         { text: 'Tawasul:\n\n- إِلَى حَضْرَةِ النَّبِيِّ الْمُصْطَفَى سَيِّدِنَا مُحمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ وَاٰلِهِ وَأَزْوَاجِهِ وَأَوْلَادِهِ وَذُرِّيَّاتِهِ الْفَــاتِحَةُ\n\n- ثُمَّ إِلَى حَضْرَةِ اِخْوَانِهِ مِنَ الْأَنْبِيَاءِوَالْمُرْسَلِيْنَ وَالْأَوْلِيَاءِ وَالشُّهَدَاءِ وَالصَّالِحِيْنَ وَالصَّحَابَةِ وَالتَّابِعِيْنَ وَالْعُلَمَاءِ وَالْمُصَنِّفِيْنَ وَجَمِيْعِ الْمَلَائِكَةِ الْمُقَرَّبِيْنَ خُصُوْصًا سَيِّدِنَا شَيْخِ عَبْدِ الْقادِرِ الجَيْلَانِي رَضِيَ اللهُ عَنْهُ …اَلْفَاتِحَه', target: 0 },
-      { text: 'Tawasul:\n\n إِلَى حَضْرَةِ مْبَاهْ خَلِيْل بَنْكَلَان\n\n- وَإِلَى رُوْحِ مَنْ أَجَازَنِي\n\n- وَإِلَى أَبِي وَأُمِّي', target: 0 },
-      { text: 'الْفَاتِحَة', target: 50 },
-      { text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ', target: 3 },
-      { text: 'يَالَطِيْفُ', target: 129 },
-      { text: 'ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزُقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ', target: 7 },
-      { text: 'اَللهُمَّ اِنِّىْ اَسْأَلُكَ اَنْ تَرْزُقَنِىْ رِزْقًا حَلاَلاً وَاسِعًا طَيِّبًا مِنْ غَيْرِ تَعَبٍ وَلاَمَشَقَّةٍ وَلاَضَيْرٍ وَلاَنَصَبٍ اِنَّكَ عَلَى كُلِّ شَىْءٍ قَدِيْرٌ', target: 3 },
-      { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
+        { text: 'Tawasul:\n\n إِلَى حَضْرَةِ مْبَاهْ خَلِيْل بَنْكَلَان\n\n- وَإِلَى رُوْحِ مَنْ أَجَازَنِي\n\n- وَإِلَى أَبِي وَأُمِّي', target: 0 },
+        { text: 'الْفَاتِحَة', target: 50 },
+        { text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ', target: 3 },
+        { text: 'يَالَطِيْفُ', target: 129 },
+        { text: 'ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ', target: 7 },
+        { text: 'اَللهُمَّ اِنِّىْ اَسْأَلُكَ اَنْ تَرْزُقَنِىْ رِزْقًا حَلاَلاً وَاسِعًا طَيِّبًا مِنْ غَيْرِ تَعَبٍ وَلاَمَشَقَّةٍ وَلاَضَيْرٍ وَلاَنَصَبٍ اِنَّكَ عَلَى كُلِّ شَىْءٍ قَدِيْرٌ', target: 3 },
+        { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
     ];
 
     let currentPhaseIndex = 0;
-    let currentCount = 1; // mulai dari 1
+    let currentCount = 1;
 
-
-window.setTarget = function(value, ev) {
-  console.log("setTarget kepanggil dengan:", value); // 👈 tes
-  if (ev) ev.stopPropagation();
-  dhikrPhases[currentPhaseIndex].target = value;
-  currentCount = 1;
-  updateDisplay();
-}
-
+    window.setTarget = function(value, ev) {
+      if (ev) ev.stopPropagation();
+      dhikrPhases[currentPhaseIndex].target = value;
+      currentCount = 1;
+      updateDisplay();
+    }
 
     function updateProgress(percent){
-      // Naikkan tinggi warna kuning
       goldFill.style.height = percent + '%';
-      // Geser posisi coin tepat di atas warna kuning (bawah gambar = batas progress)
       coinImg.style.bottom = percent + '%';
     }
 
-   function updateDisplay() {
-  const phase = dhikrPhases[currentPhaseIndex];
-  dhikrDisplay.textContent = phase.text;
-
-  if (phase.targets) {
-    // pilihan multiple target (contoh [20, 50])
-    let choices = phase.targets.map(t => 
-  `<button class="choice-btn" onclick="setTarget(${t}, event)">${t}x</button>`
-).join(" ");
-
-    targetDisplay.innerHTML = choices;
-    targetDisplay.style.display = "block";
-    countDisplay.style.display = "none"; 
-    updateProgress(0);
-
-  } else if (phase.target > 0) {
-    // target tunggal
-    countDisplay.style.display = 'block';
-    targetDisplay.style.display = 'block';
-    countDisplay.textContent = currentCount;
-    targetDisplay.textContent = `${phase.target}x`;
-    const percent = (currentCount / phase.target) * 100;
-    updateProgress(percent);
-
-  } else {
-    // step tanpa target
-    countDisplay.style.display = 'none';
-    targetDisplay.style.display = 'none';
-    updateProgress(0);
-  }
-}
-
-
-
+    function updateDisplay() {
+      const phase = dhikrPhases[currentPhaseIndex];
+      dhikrDisplay.textContent = phase.text;
+      if (phase.targets) {
+        let choices = phase.targets.map(t => 
+          `<button class="choice-btn" onclick="setTarget(${t}, event)">${t}x</button>`
+        ).join(" ");
+        targetDisplay.innerHTML = choices;
+        targetDisplay.style.display = "block";
+        countDisplay.style.display = "none"; 
+        updateProgress(0);
+      } else if (phase.target > 0) {
+        countDisplay.style.display = 'block';
+        targetDisplay.style.display = 'block';
+        countDisplay.textContent = currentCount;
+        targetDisplay.textContent = `${phase.target}x`;
+        const percent = (currentCount / phase.target) * 100;
+        updateProgress(percent);
+      } else {
+        countDisplay.style.display = 'none';
+        targetDisplay.style.display = 'none';
+        updateProgress(0);
+      }
+    }
 
     function vibrate(ms) {
       if (vibrateCheck.checked && navigator.vibrate) navigator.vibrate(ms);
     }
 
+    // --- FUNCTION UPDATED ---
     function handleTap() {
-  const phase = dhikrPhases[currentPhaseIndex];
+      const phase = dhikrPhases[currentPhaseIndex];
 
-  // kalau fase punya multiple targets tapi belum dipilih, jangan apa2
-  if (phase.targets && !phase.target) {
-    return;
-  }
-
-  if (phase.target === 0) {
-    currentPhaseIndex++; 
-    currentCount = 1; 
-    smallConfetti();
-  } else {
-    if (currentCount < phase.target) {
-      currentCount++; 
-      vibrate(50);
-    } else if (currentCount === phase.target) {
-      vibrate([100,50,100]);
-      try { ding.currentTime = 0; ding.play(); } catch(e) {}
-      if (currentPhaseIndex === dhikrPhases.length - 1) { 
-        showConfetti(); 
-        return; 
-      } else { 
-        smallConfetti(); 
+      if (phase.targets && !phase.target) {
+        return;
       }
-      currentPhaseIndex++; 
-      currentCount = 1;
-    }
-  }
-  updateDisplay();
-}
 
+      if (phase.target === 0) {
+        // For phases without a counter (like Tawasul)
+        currentPhaseIndex++;
+        currentCount = 1;
+        smallConfetti();
+      } else {
+        // For phases with a counter
+        if (currentCount < phase.target) {
+          currentCount++;
+          
+          // Check if this tap reaches the target
+          if (currentCount === phase.target) {
+            // Target reached! Play sound and give strong vibration.
+            vibrate([100, 50, 100]);
+            try {
+              ding.currentTime = 0;
+              ding.play();
+            } catch (e) {}
+          } else {
+            // Regular count, normal vibration
+            vibrate(50);
+          }
+        } else {
+          // If count is already at target, this tap transitions to the next phase
+          if (currentPhaseIndex === dhikrPhases.length - 1) {
+            showConfetti();
+            return;
+          } else {
+            smallConfetti();
+          }
+          currentPhaseIndex++;
+          currentCount = 1;
+        }
+      }
+      updateDisplay();
+    }
+    // --- END OF UPDATE ---
 
     function smallConfetti(){
       confetti({ particleCount: 25, spread: 60, origin: { y: 0.7 }, colors: ['#FFD700','#00BFFF','#FF69B4'] });
     }
 
-function skipPhase(e) {
-  e.stopPropagation();
-  if (currentPhaseIndex < dhikrPhases.length - 1) {
-    currentPhaseIndex++;
-    currentCount = 1;
-    updateDisplay();
-  } else {
-    showConfetti(); // kalau sudah terakhir
-  }
-}
+    function skipPhase(e) {
+      e.stopPropagation();
+      if (currentPhaseIndex < dhikrPhases.length - 1) {
+        currentPhaseIndex++;
+        currentCount = 1;
+        updateDisplay();
+      } else {
+        showConfetti();
+      }
+    }
 
-
-    function showConfetti(){ stopStopwatch();
+    function showConfetti(){
+      stopStopwatch();
       let duration = 3000, end = Date.now() + duration;
       (function frame(){
         confetti({ particleCount: 30, spread: 90, origin: { y: 0.6 }, colors: ['#FFD700','#000000','#FFFFFF'] });
@@ -278,7 +269,6 @@ function skipPhase(e) {
       setTimeout(() => { confettiEmoji.style.display = 'none'; cover.style.display = 'flex'; tasbihContainer.style.display = 'none'; }, duration + 1000);
     }
 
-    
     let stopwatchInterval;
     let stopwatchStart;
 
@@ -304,7 +294,13 @@ function skipPhase(e) {
     }
 
     startBtn.addEventListener('click', () => {
-      cover.style.display = 'none'; tasbihContainer.style.display = 'flex'; currentPhaseIndex = 0; currentCount = 1; updateDisplay(); resetStopwatch(); startStopwatch();
+      cover.style.display = 'none';
+      tasbihContainer.style.display = 'flex';
+      currentPhaseIndex = 0;
+      currentCount = 1;
+      updateDisplay();
+      resetStopwatch();
+      startStopwatch();
     });
 
     tasbihContainer.addEventListener('click', handleTap);
