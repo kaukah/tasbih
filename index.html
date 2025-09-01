@@ -6,6 +6,8 @@
   <title>Tasbih Digital</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600&family=Vazirmatn:wght@400;600&display=swap');
+
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
@@ -41,14 +43,22 @@
       width: 100%; height: 100vh; display: none; flex-direction: column; justify-content: center; align-items: center;
       text-align: center; padding: 20px; box-sizing: border-box; z-index: 3; position: relative;
     }
-    #dhikr-display { font-size: 1.5rem; font-weight: 600; color: #007bff; margin: 20px 0; z-index: 3; white-space: pre-line; }
+    #dhikr-display { 
+        font-size: 1.5rem; 
+        font-weight: 600; 
+        color: #007bff; 
+        margin: 20px 0; 
+        z-index: 3; 
+        white-space: pre-line;
+        font-family: 'Vazirmatn', 'Noto Sans Arabic', sans-serif;
+    }
     #count-display, #target-display {
-  font-size: 1.5rem;
-  color: #000;
-  margin-bottom: 20px;
-  z-index: 99; /* ⬅️ pastikan lebih tinggi dari #gold-fill dan #coin-img */
-  position: relative;
-}
+      font-size: 1.5rem;
+      color: #000;
+      margin-bottom: 20px;
+      z-index: 99;
+      position: relative;
+    }
     #count-display { margin-top: -10px; font-size: 9rem; font-weight: 600; }
     #target-display { font-size: 1.5rem; color: #6c757d; margin-bottom: 20px; }
     #reset-button {
@@ -72,7 +82,7 @@
       position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none;
       justify-content: center; align-items: center; font-size: 4rem; z-index: 4;
     }
-    
+      
     #stopwatch {
       position: absolute;
       top: 10px;
@@ -142,14 +152,14 @@
     const ding = new Audio('ding.mp3');
 
     const dhikrPhases = [
-        { text: 'Tawasul:\n\n- إِلَى حَضْرَةِ النَّبِيِّ الْمُصْطَفَى سَيِّدِنَا مُحمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ وَاٰلِهِ وَأَزْوَاجِهِ وَأَوْلَادِهِ وَذُرِّيَّاتِهِ الْفَــاتِحَةُ\n\n- ثُمَّ إِلَى حَضْرَةِ اِخْوَانِهِ مِنَ الْأَنْبِيَاءِوَالْمُرْسَلِيْنَ وَالْأَوْلِيَاءِ وَالشُّهَدَاءِ وَالصَّالِحِيْنَ وَالصَّحَابَةِ وَالتَّابِعِيْنَ وَالْعُلَمَاءِ وَالْمُصَنِّفِيْنَ وَجَمِيْعِ الْمَلَائِكَةِ الْمُقَرَّبِيْنَ خُصُوْصًا سَيِّدِنَا شَيْخِ عَبْدِ الْقادِرِ الجَيْلَانِي رَضِيَ اللهُ عَنْهُ …اَلْفَاتِحَه', target: 0 },
+        { text: 'Tawasul:\n\n- إِلَى حَضْرَةِ النَّبِيِّ الْمُصْطَفَى سَيِّدِنَا مُحمَّدٍ صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ وَاٰلِهِ وَأَزْوَاجِهِ وَأَوْلَادِهِ وَذُرِّيَّاتِهِ الْفَــاتِحَةُ\n\n- ثُمَّ إِلَى حَضْرَةِ اِخْوَانِهِ مِنَ الْأَنْبِيَاءِوَالْمُرْسِلِيْنَ وَالْأَوْلِيَاءِ وَالشُّهَدَاءِ وَالصَّالِحِيْنَ وَالصَّحَابَةِ وَالتَّابِعِيْنَ وَالْعُلَمَاءِ وَالْمُصَنِّفِيْنَ وَجَمِيْعِ الْمَلَائِكَةِ الْمُقَرَّبِيْنَ خُصُوْصًا سَيِّدِنَا شَيْخِ عَبْدِ الْقادِرِ الجَيْلَانِي رَضِيَ اللهُ عَنْهُ …اَلْفَاتِحَه', target: 0 },
         { text: 'Tawasul:\n\n إِلَى حَضْرَةِ مْبَاهْ خَلِيْل بَنْكَلَان\n\n- وَإِلَى رُوْحِ مَنْ أَجَازَنِي\n\n- وَإِلَى أَبِي وَأُمِّي', target: 0 },
         { text: 'الْفَاتِحَة', target: 50 },
         { text: 'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنْ الْهَمِّ وَالْحَزَنِ وَأَعُوذُ بِكَ مِنْ الْعَجْزِ وَالْكَسَلِ وَأَعُوذُ بِكَ مِنْ الْجُبْنِ وَالْبُخْلِ وَأَعُوذُ بِكَ مِنْ غَلَبَةِ الدَّيْنِ وَقَهْرِ الرِّجَالِ', target: 3 },
         { text: 'يَالَطِيْفُ', target: 129 },
         { text: 'ٱللَّهُ لَطِيفٌۢ بِعِبَادِهِۦ يَرْزقُ مَن يَشَآءُ ۖ وَهُوَ ٱلْقَوِىُّ ٱلْعَزِيزُ', target: 7 },
         { text: 'اَللهُمَّ اِنِّىْ اَسْأَلُكَ اَنْ تَرْزُقَنِىْ رِزْقًا حَلاَلاً وَاسِعًا طَيِّبًا مِنْ غَيْرِ تَعَبٍ وَلاَمَشَقَّةٍ وَلاَضَيْرٍ وَلاَنَصَبٍ اِنَّكَ عَلَى كُلِّ شَىْءٍ قَدِيْرٌ', target: 3 },
-        { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
+        { text: 'اللَّهُمَّ صَلِّ عَلَى سَيِّدِنَا مُحَمَّدٍ', target: 100 }
     ];
 
     let currentPhaseIndex = 0;
